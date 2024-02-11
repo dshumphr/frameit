@@ -9,9 +9,9 @@ def download_image(image_url, save_path):
         os.makedirs(os.path.dirname(save_path), exist_ok=True)
         with open(save_path, 'wb') as f:
             f.write(response.content)
-        print(f"Image saved to {save_path}")
+        print(f"{save_path}")
     else:
-        print("Failed to download the image.")
+        raise RuntimeError("Failed to download image.")
 
 def generate_filename(directory):
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
@@ -26,6 +26,7 @@ def main():
     parser = argparse.ArgumentParser(description='Download an upscaled image generated from a prompt.')
     parser.add_argument('desc', help='Text description of the image to generate')
     parser.add_argument('--save-path', default=os.path.expanduser("~/drawings/main"), help='Path where the upscaled image will be saved.')
+    parser.add_argument('--verbose', action='store_true', help='Enable verbose logging.')
     args = parser.parse_args()
 
     # Your FAL_KEY should be retrieved from an environment variable
@@ -48,11 +49,13 @@ def main():
 
     generate_response = requests.post(generate_image_url, headers=headers, json=data)
     generate_response_json = generate_response.json()
-    print("Image generation response:", generate_response_json)
+    if args.verbose:
+        print("Image generation response:", generate_response_json)
 
     # Extract the generated image URL
     generated_image_url = generate_response_json['images'][0]['url']
-    print("Generated Image URL:", generated_image_url)
+    if args.verbose:
+        print("Generated Image URL:", generated_image_url)
 
     # Step 2: Upscale the generated image using ESRGAN
     upscale_image_url = 'https://fal.run/fal-ai/esrgan'
@@ -62,11 +65,13 @@ def main():
 
     upscale_response = requests.post(upscale_image_url, headers=headers, json=upscale_data)
     upscale_response_json = upscale_response.json()
-    print("Upscaling response:", upscale_response_json)
+    if args.verbose:
+        print("Upscaling response:", upscale_response_json)
 
     # Extract the file name of the upscaled image
     upscaled_image_url = upscale_response_json['image']['url']
-    print("Upscaled Image URL:", upscaled_image_url)
+    if args.verbose:
+        print("Upscaled Image URL:", upscaled_image_url)
 
     # Download and save the upscaled image
     file_path = generate_filename(args.save_path)
