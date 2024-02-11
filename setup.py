@@ -9,7 +9,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "draw=draw.main:main",  # "command=package.module:function"
+            "draw=draw.draw:main",  # "command=package.module:function"
         ],
     },
 )
