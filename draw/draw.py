@@ -2,6 +2,7 @@ import argparse
 import os
 import requests
 from datetime import datetime
+import time
 
 def download_image(image_url, save_path):
     response = requests.get(image_url)
@@ -27,12 +28,15 @@ def main():
     parser.add_argument('desc', help='Text description of the image to generate')
     parser.add_argument('--save-path', default=os.path.expanduser("~/drawings/main"), help='Path where the upscaled image will be saved.')
     parser.add_argument('--verbose', action='store_true', help='Enable verbose logging.')
+    parser.add_argument('--log-path', default="/tmp/draw_log", help='Path where debugging logs will be saved.')
     args = parser.parse_args()
 
     # Your FAL_KEY should be retrieved from an environment variable
     FAL_KEY = os.getenv('FAL_KEY')
     if not FAL_KEY:
         raise ValueError("FAL_KEY environment variable is not set.")
+
+    start_time = time.time()
 
     # Step 1: Generate an image using Stable Diffusion
     generate_image_url = 'https://fal.run/fal-ai/fast-sdxl'
@@ -76,6 +80,14 @@ def main():
     # Download and save the upscaled image
     file_path = generate_filename(args.save_path)
     download_image(upscaled_image_url, file_path)
+
+    end_time = time.time()
+    duration = end_time - start_time
+    log_message = f"Total time taken: {duration} seconds\n"
+    with open(args.log_path, 'a') as log_file:
+        log_file.write(log_message)
+        if args.verbose:
+            print("Total time logged to: ", args.log_path)
 
 if __name__ == '__main__':
     main()
