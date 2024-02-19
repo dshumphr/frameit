@@ -1,6 +1,6 @@
 # FrameIt
 
-FrameIt is a Python command-line tool that automates the generation and upscaling of images based on textual descriptions. Leveraging Stable Diffusion XL over `fal.ai`, it provides a seamless way to create images with minimal effort. I run this tool on a Pi Zero W connected to a Frame TV - in combination with an iOS shortcut, I can frame new AI-generated art anytime for $0.01 (as of writing).
+FrameIt is a Python command-line tool that automates the generation and upscaling of images based on textual descriptions. Leveraging Stable Diffusion XL over `fal.ai`, it provides a seamless way to create images with minimal effort. I run this tool on a Pi Zero W connected to a Frame TV - in combination with an iOS shortcut, I can frame new AI-generated art anytime for < $0.01 (as of writing).
 
 ## Prerequisites
 
