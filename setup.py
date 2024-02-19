@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="draw",
+    name="frameit",
     version="0.1.0",
     packages=find_packages(),
     install_requires=[
@@ -9,7 +9,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "draw=draw.draw:main",  # "command=package.module:function"
+            "frameit=frameit.frameit:main",  # "command=package.module:function"
         ],
     },
 )
