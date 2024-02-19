@@ -12,7 +12,7 @@ FrameIt is a Python command-line tool that automates the generation and upscalin
 1. **Clone the Repository**
 
    ```bash
-   git clone https://yourrepositoryurl.git
+   git clone https://github.com/dshumphr/frameit.git
    cd frameit
    ```
 
