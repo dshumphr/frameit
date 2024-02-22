@@ -4,6 +4,7 @@ FrameIt is a Python command-line tool that automates the generation and upscalin
 
 ## Prerequisites
 
+- Unix
 - Python 3.6+
 - An active `fal.ai` API key set as the `FAL_KEY` environment variable.
 
@@ -16,18 +17,18 @@ FrameIt is a Python command-line tool that automates the generation and upscalin
    cd frameit
    ```
 
-2. **Setup Environment Variable**
-
-   Ensure the `FAL_KEY` environment variable is set with your `fal.ai` API key.
-
-   ```bash
-   export FAL_KEY='your_fal_api_key_here'
-   ```
-
-3. **Install FrameIt**
+2. **Install FrameIt**
 
    ```bash
    pip install .
+   ```
+
+3. **Setup Environment Variable**
+
+   Ensure the `FAL_KEY` environment variable is set with your `fal.ai` API key. Note if you want to use the iOS shortcut, you'll need to save in /etc/environment.
+
+   ```bash
+   export FAL_KEY='your_fal_api_key_here'
    ```
 
 ## Usage
@@ -40,7 +41,7 @@ frameit "Your image description here"
 
 - See `--help` for more options.
 
-- **iOS Shortcut Integration**: FrameIt can be integrated with an iOS shortcut for remote execution. [View Shortcut](https://www.icloud.com/shortcuts/4d191b52f6664dbda2a5f9c2533c2575) This will require installing `fbi` on your device and enabling ssh.
+- **iOS Shortcut Integration**: FrameIt can be integrated with an iOS shortcut for remote execution. [View Shortcut](https://www.icloud.com/shortcuts/4d191b52f6664dbda2a5f9c2533c2575) This will require installing `fbi` on the device running `frameit` and enabling ssh.
 
 
 ## Notes
