@@ -3,6 +3,7 @@ import os
 import requests
 from datetime import datetime
 import time
+from .prompt_optimizer import process_tags
 
 def download_image(image_url, save_path):
     response = requests.get(image_url)
@@ -29,6 +30,7 @@ def main():
     parser.add_argument('--save-path', default=os.path.expanduser("~/drawings/main"), help='Path where the upscaled image will be saved.')
     parser.add_argument('--verbose', action='store_true', help='Enable verbose logging.')
     parser.add_argument('--log-path', default="/tmp/draw_log", help='Path where debugging logs will be saved.')
+    parser.add_argument('--autoprompt', action='store_true', help='Enable automatic prompt enhancements. Requires running tags_to_vecs first.')
     args = parser.parse_args()
 
     # Your FAL_KEY should be retrieved from an environment variable
@@ -38,6 +40,11 @@ def main():
 
     start_time = time.time()
 
+    # Step 0: Optimize prompt
+    prompt = args.desc
+    if args.autopromp:
+        prompt = process_tags(prompt)
+
     # Step 1: Generate an image using Stable Diffusion
     generate_image_url = 'https://fal.run/fal-ai/fast-sdxl'
     headers = {
@@ -45,7 +52,7 @@ def main():
         'Content-Type': 'application/json',
     }
     data = {
-        'prompt': args.desc,
+        'prompt': prompt,
         'negative_prompt': NEG,
         'sync_mode': True,
         'image_size': 'landscape_16_9',
