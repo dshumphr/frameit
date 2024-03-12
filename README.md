@@ -7,6 +7,7 @@ FrameIt is a Python command-line tool that automates the generation and upscalin
 - Unix
 - Python 3.6+
 - An active `fal.ai` API key set as the `FAL_KEY` environment variable.
+- If using `sonnet` auto-prompt enhancements, an active Anthropic API key set as `ANTRHOPIC_API_KEY` environment variable.
 
 ## Installation
 

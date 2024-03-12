@@ -20,6 +20,39 @@ def generate_filename(directory):
     filename = f"{directory}/image_{timestamp}.png"
     return filename
 
+def generate_sonnet(prompt):
+    import anthropic
+
+    A_KEY = os.getenv('ANTHROPIC_API_KEY')
+    if not A_KEY:
+        raise ValueError("ANTHROPIC_API_KEY environment variable is not set.")
+
+    client = anthropic.Anthropic(api_key=A_KEY)
+    sonnet_prompt = f"""
+    Let's fix up some prompts for AI art generation. Here are some examples:
+    Input prompt: castle
+    Improved prompt: A medieval castle looms, overlooking the sea, painted in the style of Vermeer
+
+    Input prompt: Gandalf, cyberpunk
+    Improved prompt: Gandalf the wizard holds his staff glowing staff, cyberpunk robes, Lord of the Rings, realistically rendered, neon lights, futuristic cyberpunk
+
+    Input prompt: Ironman
+    Improved prompt: Ironman, closeup, retro poster, shining armour
+
+    Now you try. Improve "{prompt}". Return the new prompt only.
+    """
+
+    response = client.messages.create(
+        max_tokens=1024,
+        model="claude-3-sonnet-20240229",
+        messages=[
+            {"role": "user", "content": sonnet_prompt}
+        ]
+    )
+
+    sonneted = response.content[0].text.strip()
+    return sonneted
+
 # Stolen from reddit: https://www.reddit.com/r/StableDiffusion/comments/xwu5od/about_that_huge_long_negative_prompt_list/
 NEG = '((((ugly)))), (((duplicate))), ((morbid)), ((mutilated)), out of frame, extra fingers, mutated hands, ((poorly drawn hands)), ((poorly drawn face)), (((mutation))), (((deformed))), ((ugly)), blurry, ((bad anatomy)), (((bad proportions))), ((extra limbs)), cloned face, (((disfigured))), out of frame, ugly, extra limbs, (bad anatomy), gross proportions, (malformed limbs), ((missing arms)), ((missing legs)), (((extra arms))), (((extra legs))), mutated hands, (fused fingers), (too many fingers), (((long neck)))'
 
@@ -30,7 +63,7 @@ def main():
     parser.add_argument('--save-path', default=os.path.expanduser("~/drawings/main"), help='Path where the upscaled image will be saved.')
     parser.add_argument('--verbose', action='store_true', help='Enable verbose logging.')
     parser.add_argument('--log-path', default="/tmp/draw_log", help='Path where debugging logs will be saved.')
-    parser.add_argument('--autoprompt', action='store_true', help='Enable automatic prompt enhancements. Requires running tags_to_vecs first.')
+    parser.add_argument('--autoprompt', choices=['none', 'sim_tags', 'sonnet'], default='none', help='Enable automatic prompt enhancements. `sim_tags` requires running tags_to_vecs first and `sonnet` requires Anthropic API key.')
     args = parser.parse_args()
 
     # Your FAL_KEY should be retrieved from an environment variable
@@ -42,8 +75,10 @@ def main():
 
     # Step 0: Optimize prompt
     prompt = args.desc
-    if args.autopromp:
+    if args.autoprompt == 'sim_tags':
         prompt = process_tags(prompt)
+    elif args.autoprompt == 'sonnet':
+        prompt = generate_sonnet(prompt)
 
     # Step 1: Generate an image using Stable Diffusion
     generate_image_url = 'https://fal.run/fal-ai/fast-sdxl'

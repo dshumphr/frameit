@@ -6,9 +6,10 @@ setup(
     packages=find_packages(),
     package_data={"frameit": ["data/*.pkl"]},
     install_requires=[
-        "requests",  # Add your project dependencies here
+        "requests",
         "spacy",
         "scikit-learn",
+        "anthropic",
     ],
     entry_points={
         "console_scripts": [
