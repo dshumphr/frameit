@@ -7,8 +7,6 @@ setup(
     package_data={"frameit": ["data/*.pkl"]},
     install_requires=[
         "requests",
-        "spacy",
-        "scikit-learn",
         "anthropic",
     ],
     entry_points={

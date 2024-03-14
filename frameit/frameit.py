@@ -3,7 +3,6 @@ import os
 import requests
 from datetime import datetime
 import time
-from .prompt_optimizer import process_tags
 
 def download_image(image_url, save_path):
     response = requests.get(image_url)
@@ -63,7 +62,7 @@ def main():
     parser.add_argument('--save-path', default=os.path.expanduser("~/drawings/main"), help='Path where the upscaled image will be saved.')
     parser.add_argument('--verbose', action='store_true', help='Enable verbose logging.')
     parser.add_argument('--log-path', default="/tmp/draw_log", help='Path where debugging logs will be saved.')
-    parser.add_argument('--autoprompt', choices=['none', 'sim_tags', 'sonnet'], default='none', help='Enable automatic prompt enhancements. `sim_tags` requires running tags_to_vecs first and `sonnet` requires Anthropic API key.')
+    parser.add_argument('--autoprompt', choices=['none', 'sonnet'], default='none', help='Enable automatic prompt enhancements. `sonnet` requires Anthropic API key.')
     args = parser.parse_args()
 
     # Your FAL_KEY should be retrieved from an environment variable
@@ -75,9 +74,7 @@ def main():
 
     # Step 0: Optimize prompt
     prompt = args.desc
-    if args.autoprompt == 'sim_tags':
-        prompt = process_tags(prompt)
-    elif args.autoprompt == 'sonnet':
+    if args.autoprompt == 'sonnet':
         prompt = generate_sonnet(prompt)
 
     # Step 1: Generate an image using Stable Diffusion
