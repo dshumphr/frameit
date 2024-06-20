@@ -14,9 +14,11 @@ def download_image(image_url, save_path):
     else:
         raise RuntimeError("Failed to download image.")
 
-def generate_filename(directory):
-    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-    filename = f"{directory}/image_{timestamp}.png"
+def generate_timestamp():
+    return datetime.now().strftime("%Y%m%d%H%M%S")
+
+def generate_filename(directory, timestamp, suffix):
+    filename = f"{directory}/image_{timestamp}{suffix}"
     return filename
 
 def generate_sonnet(prompt):
@@ -43,7 +45,7 @@ def generate_sonnet(prompt):
 
     response = client.messages.create(
         max_tokens=1024,
-        model="claude-3-sonnet-20240229",
+        model="claude-3-5-sonnet-20240620",
         messages=[
             {"role": "user", "content": sonnet_prompt}
         ]
@@ -54,6 +56,10 @@ def generate_sonnet(prompt):
 
 # Stolen from reddit: https://www.reddit.com/r/StableDiffusion/comments/xwu5od/about_that_huge_long_negative_prompt_list/
 NEG = '((((ugly)))), (((duplicate))), ((morbid)), ((mutilated)), out of frame, extra fingers, mutated hands, ((poorly drawn hands)), ((poorly drawn face)), (((mutation))), (((deformed))), ((ugly)), blurry, ((bad anatomy)), (((bad proportions))), ((extra limbs)), cloned face, (((disfigured))), out of frame, ugly, extra limbs, (bad anatomy), gross proportions, (malformed limbs), ((missing arms)), ((missing legs)), (((extra arms))), (((extra legs))), mutated hands, (fused fingers), (too many fingers), (((long neck)))'
+
+def save_prompt(prompt, file_path):
+    with open(file_path, 'w') as f:
+        f.write(prompt)
 
 def main():
     # Set up argument parser
@@ -72,8 +78,12 @@ def main():
 
     start_time = time.time()
 
+    # Generate a single timestamp for all files
+    timestamp = generate_timestamp()
+
     # Step 0: Optimize prompt
-    prompt = args.desc
+    original_prompt = args.desc
+    prompt = original_prompt
     if args.autoprompt == 'sonnet':
         prompt = generate_sonnet(prompt)
 
@@ -117,8 +127,17 @@ def main():
         print("Upscaled Image URL:", upscaled_image_url)
 
     # Download and save the upscaled image
-    file_path = generate_filename(args.save_path)
-    download_image(upscaled_image_url, file_path)
+    image_file_path = generate_filename(args.save_path, timestamp, ".png")
+    download_image(upscaled_image_url, image_file_path)
+
+    # Save original prompt
+    original_prompt_file = generate_filename(args.save_path, timestamp, ".txt")
+    save_prompt(original_prompt, original_prompt_file)
+
+    # Save reprompt if it was used
+    if args.autoprompt == 'sonnet':
+        reprompt_file = generate_filename(args.save_path, timestamp, "_reprompt.txt")
+        save_prompt(prompt, reprompt_file)
 
     end_time = time.time()
     duration = end_time - start_time
