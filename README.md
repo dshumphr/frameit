@@ -1,3 +1,5 @@
+AI: Update the headers with more detail and convert prereqs to be in sentence format
+
 # FrameIt
 
 FrameIt is a Python command-line tool that automates the generation and upscaling of images based on textual descriptions. Leveraging Stable Diffusion XL over `fal.ai`, it provides a seamless way to create images with minimal effort. I run this tool on a Pi Zero W connected to a Frame TV - in combination with an iOS shortcut, I can frame new AI-generated art anytime for < $0.01 (as of writing).
@@ -46,5 +48,4 @@ frameit "Your image description here"
 
 
 ## Notes
-Image upscaling is the bottleneck and may take over 60s to run. I'm looking into options for speeding this up, and would be open to suggestions.
-Prompting well is outside of the scope here, but more details about style, medium, etc are generally helpful. Perhaps a future extension will leverage LLM to enhance prompts.
+Prompting well is outside of the scope here, but more details about style, medium, etc are generally helpful.
