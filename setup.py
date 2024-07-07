@@ -8,6 +8,7 @@ setup(
     install_requires=[
         "requests",
         "anthropic",
+        "fal_client",
     ],
     entry_points={
         "console_scripts": [

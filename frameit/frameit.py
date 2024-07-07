@@ -3,6 +3,7 @@ import os
 import requests
 from datetime import datetime
 import time
+import fal_client
 
 def download_image(image_url, save_path):
     response = requests.get(image_url)
@@ -61,14 +62,18 @@ def save_prompt(prompt, file_path):
     with open(file_path, 'w') as f:
         f.write(prompt)
 
+def upload_image(image_path):
+    with open(image_path, 'rb') as f:
+        return fal_client.upload(f, "image/png")
+
 def main():
-    # Set up argument parser
     parser = argparse.ArgumentParser(description='Download an upscaled image generated from a prompt.')
     parser.add_argument('desc', help='Text description of the image to generate')
     parser.add_argument('--save-path', default=os.path.expanduser("~/drawings/main"), help='Path where the upscaled image will be saved.')
     parser.add_argument('--verbose', action='store_true', help='Enable verbose logging.')
     parser.add_argument('--log-path', default="/tmp/draw_log", help='Path where debugging logs will be saved.')
     parser.add_argument('--autoprompt', choices=['none', 'sonnet'], default='none', help='Enable automatic prompt enhancements. `sonnet` requires Anthropic API key.')
+    parser.add_argument('--image-to-image', help='Path to the input image for image-to-image generation.')
     args = parser.parse_args()
 
     # Your FAL_KEY should be retrieved from an environment variable
@@ -99,6 +104,11 @@ def main():
         'sync_mode': True,
         'image_size': 'landscape_16_9',
     }
+
+    if args.image_to_image:
+        generate_image_url = 'https://fal.run/fal-ai/fast-sdxl/image-to-image'
+        image_url = upload_image(args.image_to_image)
+        data['image_url'] = image_url
 
     generate_response = requests.post(generate_image_url, headers=headers, json=data)
     generate_response_json = generate_response.json()
